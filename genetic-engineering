@@ -1,0 +1,30 @@
+from Bio.Seq import Seq
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+from Bio.SeqFeature import SeqFeature, FeatureLocation
+from Bio.Restriction import Restriction
+
+# Step 1: Load DNA sequence
+input_sequence = SeqIO.read("input_sequence.fasta", "fasta")
+
+# Step 2: Define target gene and guide RNA sequence
+target_gene = "ATGGCGGAGCTGCGGCAGTAG"
+guide_rna_sequence = "GTTAAGAGCTATGCTGGAAAC"
+
+# Step 3: Perform CRISPR-Cas9 editing
+def crispr_cas9_editing(dna_sequence, target_gene, guide_rna_sequence):
+    edited_sequence = dna_sequence.upper()
+    target_location = edited_sequence.find(target_gene)
+    if target_location != -1:
+        edited_sequence = edited_sequence[:target_location] + guide_rna_sequence + edited_sequence[target_location + len(target_gene):]
+    return edited_sequence
+
+edited_sequence = crispr_cas9_editing(input_sequence.seq, target_gene, guide_rna_sequence)
+
+# Step 4: Verify edited sequence
+edited_seq_record = SeqRecord(Seq(edited_sequence), id="edited_sequence", description="CRISPR-Cas9 edited sequence")
+
+# Step 5: Save edited sequence to file
+SeqIO.write(edited_seq_record, "edited_sequence.fasta", "fasta")
+
+print("CRISPR-Cas9 editing completed successfully!")
